@@ -1,0 +1,44 @@
+{
+  "name": "@nuwajs/persona",
+  "version": "0.1.0",
+  "description": "Nuwa role-play personas (markdown definitions), embedding metadata, precomputed index",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/systembugtj/nuwa-reviewer.git",
+    "directory": "packages/persona"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "files": ["dist", "persona"],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./persona/*": "./persona/*"
+  },
+  "scripts": {
+    "precompute-index": "tsx scripts/precompute-index.ts",
+    "ensure-index": "tsx scripts/precompute-index.ts --if-missing",
+    "build": "tsx scripts/precompute-index.ts --if-missing && vite build",
+    "dev": "vite build --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@nuwajs/config-vite": "workspace:*",
+    "tsx": "^4.19.4",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": ["nuwa", "persona", "role-play", "review"]
+}

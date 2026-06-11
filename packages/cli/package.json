@@ -1,0 +1,42 @@
+{
+  "name": "@nuwajs/cli",
+  "version": "0.1.0",
+  "description": "Nuwa — role-play review CLI for anything (nuwa init, review, feedback)",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/systembugtj/nuwa-reviewer.git",
+    "directory": "packages/cli"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "nuwa": "./dist/cli.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "vite build && node scripts/add-shebang.mjs",
+    "dev": "tsx watch src/cli.ts",
+    "start": "node dist/cli.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@nuwajs/core": "workspace:*",
+    "@nuwajs/mcp": "workspace:*",
+    "@nuwajs/persona": "workspace:*",
+    "commander": "^14.0.0",
+    "consola": "^3.4.2",
+    "ora": "^8.2.0"
+  },
+  "devDependencies": {
+    "@nuwajs/config-vite": "workspace:*",
+    "tsx": "^4.19.4"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": ["nuwa", "review", "role-play", "persona", "cli", "cursor"]
+}

@@ -1,0 +1,45 @@
+{
+  "name": "@nuwajs/core",
+  "version": "0.1.0",
+  "description": "Nuwa core — stack detection, persona deploy, role-play review (any subject) via Claude Agent SDK",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/systembugtj/nuwa-reviewer.git",
+    "directory": "packages/core"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "files": ["dist"],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.104",
+    "@huggingface/transformers": "^3.5.2",
+    "@nuwajs/persona": "workspace:*"
+  },
+  "devDependencies": {
+    "@nuwajs/config-vite": "workspace:*",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": ["nuwa", "review", "role-play", "persona"]
+}

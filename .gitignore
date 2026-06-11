@@ -1,0 +1,15 @@
+node_modules
+dist
+.nuwa
+FEEDBACK.md
+.turbo
+*.tsbuildinfo
+.env
+.env.local
+.DS_Store
+coverage
+
+.nuwa/
+!.nuwa/persona/
+
+logs/

@@ -1,0 +1,30 @@
+{
+  "name": "nuwa-reviewer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Nuwa — role-play review CLI for anything (nuwa command, @nuwajs packages)",
+  "type": "module",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "nuwa": "pnpm exec nuwa",
+    "link:global": "pnpm build && pnpm --dir packages/cli link --global",
+    "precompute-index": "pnpm --filter @nuwajs/persona precompute-index",
+    "publish:packages": "pnpm build && pnpm -r publish --filter '@nuwajs/*' --filter '!@nuwajs/config-vite' --no-git-checks",
+    "clean": "turbo run clean && rm -rf node_modules/.cache"
+  },
+  "devDependencies": {
+    "@nuwajs/cli": "workspace:*",
+    "@types/node": "^22.15.0",
+    "turbo": "^2.5.4",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

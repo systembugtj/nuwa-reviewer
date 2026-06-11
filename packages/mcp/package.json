@@ -1,0 +1,46 @@
+{
+  "name": "@nuwajs/mcp",
+  "version": "0.1.0",
+  "description": "Nuwa MCP server — expose nuwa init/review to Claude via Model Context Protocol",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/systembugtj/nuwa-reviewer.git",
+    "directory": "packages/mcp"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "files": ["dist"],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@nuwajs/core": "workspace:*",
+    "@nuwajs/persona": "workspace:*",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@nuwajs/config-vite": "workspace:*",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": ["nuwa", "mcp", "review", "claude"]
+}
