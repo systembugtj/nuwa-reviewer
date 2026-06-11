@@ -48,11 +48,16 @@ program
         : "Building persona index (embedding model)…",
     ).start();
     try {
-      await runPrecomputeIndex({
+      const { storageInit } = await runPrecomputeIndex({
         offline: opts.offline,
         force: opts.force,
       });
       spinner.succeed("Persona index ready at ~/.nuwa/persona-index.json");
+      if (storageInit.created) {
+        consola.info(
+          `Initialized global storage (index: ${storageInit.home}, models: ${storageInit.modelsDir})`,
+        );
+      }
     } catch (error) {
       spinner.fail("Precompute index failed");
       throw error;

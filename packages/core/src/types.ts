@@ -32,17 +32,6 @@ export interface PersonaIndexEntry {
   sourceFile: string;
 }
 
-/** Markdown variant for a nuwa-feedback skill deployment target */
-export type NuwaFeedbackSkillFormat = "skill" | "rules" | "copilot" | "agents";
-
-/** Optional extra nuwa-feedback deployment path (merged with built-in targets) */
-export interface NuwaFeedbackSkillTarget {
-  id: string;
-  label: string;
-  relativeFile: string;
-  format?: NuwaFeedbackSkillFormat;
-}
-
 /** Review settings stored in `.nuwa/config.json` */
 export interface NuwaReviewConfig {
   /** Claude model id for `nuwa review` */
@@ -61,8 +50,6 @@ export interface NuwaConfig {
   projectRoot: string;
   stacks: ProjectStack[];
   personas: string[];
-  /** Extra nuwa-feedback skill paths (built-in AI tool targets always included) */
-  feedbackSkillTargets?: NuwaFeedbackSkillTarget[];
   review?: NuwaReviewConfig;
   createdAt: string;
   updatedAt: string;

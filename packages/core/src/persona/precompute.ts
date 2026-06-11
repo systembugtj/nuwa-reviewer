@@ -18,6 +18,7 @@ import {
   ensureNuwaHome,
   getNuwaModelsDir,
   getNuwaPersonaIndexPath,
+  type NuwaHomeInitResult,
 } from "../paths.js";
 import { buildHeuristicPersonaIndex } from "./heuristic-index.js";
 
@@ -230,15 +231,19 @@ async function buildEmbeddingIndex(
   }
 }
 
+export interface PrecomputeIndexResult {
+  storageInit: NuwaHomeInitResult;
+}
+
 /** Build or refresh ~/.nuwa/persona-index.json from bundled persona markdown */
 export async function runPrecomputeIndex(
   options: PrecomputeIndexOptions = {},
-): Promise<void> {
+): Promise<PrecomputeIndexResult> {
   const offline =
     options.offline ?? process.env.NUWA_INDEX_OFFLINE === "1";
   const bundledPath = options.bundledFallbackPath;
 
-  await ensureNuwaHome();
+  const storageInit = await ensureNuwaHome();
   env.cacheDir = getNuwaModelsDir();
   env.allowLocalModels = true;
 
@@ -264,7 +269,7 @@ export async function runPrecomputeIndex(
       await syncIndexCopies(globalPath, bundledPath, globalOk, bundledOk);
     }
     console.log(`✓ Persona index up to date: ${globalPath}`);
-    return;
+    return { storageInit };
   }
 
   if (options.check) {
@@ -281,7 +286,7 @@ export async function runPrecomputeIndex(
   if (offline) {
     await buildOfflineIndex(ids, personasHash, globalPath, bundledWritePath);
     console.log(`✓ Wrote ${globalPath} (offline heuristic)`);
-    return;
+    return { storageInit };
   }
 
   try {
@@ -299,4 +304,6 @@ export async function runPrecomputeIndex(
     await buildOfflineIndex(ids, personasHash, globalPath, bundledWritePath);
     console.log(`✓ Wrote ${globalPath} (offline fallback)`);
   }
+
+  return { storageInit };
 }

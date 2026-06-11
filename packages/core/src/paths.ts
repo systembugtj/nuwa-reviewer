@@ -46,11 +46,19 @@ async function pathExists(path: string): Promise<boolean> {
   }
 }
 
+/** Result of first-time global storage directory creation */
+export interface NuwaHomeInitResult {
+  home: string;
+  modelsDir: string;
+  /** True when index or model cache dir did not exist before this call */
+  created: boolean;
+}
+
 /**
  * Create ~/.nuwa (index) and XDG model cache dirs.
  * Only called from `nuwa precompute-index` / `runPrecomputeIndex` — not during init/review.
  */
-export async function ensureNuwaHome(): Promise<string> {
+export async function ensureNuwaHome(): Promise<NuwaHomeInitResult> {
   const home = getNuwaHome();
   const modelsDir = getNuwaModelsDir();
   const homeExisted = await pathExists(home);
@@ -59,12 +67,9 @@ export async function ensureNuwaHome(): Promise<string> {
   await mkdir(home, { recursive: true });
   await mkdir(modelsDir, { recursive: true });
 
-  if (!homeExisted || !modelsExisted) {
-    console.error(
-      `Nuwa: initialized global storage (index: ${home}, models: ${modelsDir}). ` +
-        "Created by `nuwa precompute-index` only.",
-    );
-  }
-
-  return home;
+  return {
+    home,
+    modelsDir,
+    created: !homeExisted || !modelsExisted,
+  };
 }

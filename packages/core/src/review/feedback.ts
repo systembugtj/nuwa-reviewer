@@ -168,7 +168,6 @@ export {
   buildNuwaFeedbackRulesMarkdown,
   buildNuwaFeedbackSkillMarkdown,
   formatNuwaFeedbackSkillTargets,
-  writeNuwaFeedbackSkill,
   writeNuwaFeedbackSkills,
   type NuwaFeedbackSkillPaths,
 } from "./feedback-skill.js";

@@ -6,7 +6,6 @@ import { NUWA_FEEDBACK_SKILL_TARGETS } from "../../constants.js";
 import {
   buildNuwaFeedbackCopilotMarkdown,
   buildNuwaFeedbackSkillMarkdown,
-  resolveFeedbackSkillTargets,
   writeNuwaFeedbackSkills,
 } from "../../review/feedback-skill.js";
 
@@ -18,25 +17,6 @@ describe("nuwa-feedback skills", () => {
     expect(skill).toContain("Severity Scorecard");
     expect(copilot).toContain('applyTo: "**"');
     expect(copilot).toContain("Nuwa Feedback");
-  });
-
-  it("merges custom targets from config shape without duplicating built-ins", () => {
-    const targets = resolveFeedbackSkillTargets([
-      {
-        id: "custom",
-        label: "Custom",
-        relativeFile: ".custom/nuwa-feedback.md",
-        format: "rules",
-      },
-      {
-        id: "cursor",
-        label: "Dup",
-        relativeFile: ".cursor/skills/nuwa-feedback/SKILL.md",
-      },
-    ]);
-
-    expect(targets).toHaveLength(NUWA_FEEDBACK_SKILL_TARGETS.length + 1);
-    expect(targets.some((t) => t.id === "custom")).toBe(true);
   });
 
   it("writes all configured AI tool skill paths", async () => {
