@@ -12,12 +12,14 @@ Monorepo: pnpm + Turborepo + Vite. Spec: [.spec/rfc/001](./.spec/rfc/001-nuwa-re
 | 2 | `nuwa review --staged` | Each persona role-plays a reviewer on your changes (Claude Agent SDK) |
 | 3 | (optional) `nuwa-feedback` skill | Address findings in `FEEDBACK.md` inside Cursor |
 
-## Global storage (`~/.nuwa`)
+## Global storage
+
+Created only when you run **`nuwa precompute-index`** (not during `init` or `review`).
 
 | Path | Purpose |
 | --- | --- |
-| `~/.nuwa/models/` | Embedding model cache (`Xenova/all-MiniLM-L6-v2`, ~23 MB) |
 | `~/.nuwa/persona-index.json` | Precomputed persona index (embeddings + metadata) |
+| `$XDG_CACHE_HOME/nuwa/models/` or `~/.cache/nuwa/models/` | Embedding model cache (`Xenova/all-MiniLM-L6-v2`, ~23 MB) |
 
 Project-local (per repo):
 
@@ -33,6 +35,7 @@ Project-local (per repo):
 | `@nuwajs/persona` | Persona definitions + precompute script |
 | `@nuwajs/core` | Stack detection, deploy, role-play review engine (any subject) |
 | `@nuwajs/cli` | `nuwa` CLI (`npx @nuwajs/cli` or `npm i -g @nuwajs/cli`) |
+| `@nuwajs/mcp` | MCP stdio server for Claude Code (`nuwa mcp`) |
 
 ## Scripts
 
@@ -45,6 +48,19 @@ pnpm test                          # turbo run test (per-package vitest)
 pnpm nuwa init                     # in-repo: runs node_modules/.bin/nuwa
 pnpm nuwa review --staged
 ```
+
+### CI / offline builds
+
+Avoid the ~23 MB embedding download in CI or air-gapped environments:
+
+```bash
+NUWA_INDEX_OFFLINE=1 pnpm build && pnpm test
+# or
+pnpm precompute-index -- --offline
+pnpm build
+```
+
+`nuwa init --offline` and `nuwa index --offline` also skip embedding lookups for project persona selection.
 
 ## Local system (`nuwa` on your PATH)
 
@@ -82,3 +98,5 @@ pnpm publish:packages
 | Variable | Purpose |
 | --- | --- |
 | `ANTHROPIC_API_KEY` | Claude Agent SDK for `nuwa review` |
+| `NUWA_INDEX_OFFLINE` | Set to `1` to skip embedding model download (heuristic index) |
+| `XDG_CACHE_HOME` | Override embedding model cache directory |

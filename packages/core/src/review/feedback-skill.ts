@@ -5,11 +5,74 @@ import {
   NUWA_FEEDBACK_SKILL_TARGETS,
   type NuwaFeedbackSkillTargetId,
 } from "../constants.js";
+import { readNuwaConfig } from "../persona/deploy.js";
+import type {
+  NuwaFeedbackSkillFormat,
+  NuwaFeedbackSkillTarget,
+} from "../types.js";
+
+/** Resolved deployment target (built-in + optional config extensions) */
+export interface ResolvedFeedbackSkillTarget {
+  id: string;
+  label: string;
+  relativeFile: string;
+  format: NuwaFeedbackSkillFormat;
+}
 
 /** Skill / rule file paths written under the project root */
-export type NuwaFeedbackSkillPaths = Record<NuwaFeedbackSkillTargetId, string> & {
+export interface NuwaFeedbackSkillPaths {
   all: string[];
-};
+  [targetId: string]: string | string[];
+}
+
+const BUILTIN_FORMAT_BY_ID: Record<NuwaFeedbackSkillTargetId, NuwaFeedbackSkillFormat> =
+  {
+    canonical: "skill",
+    cursor: "skill",
+    claude: "skill",
+    windsurf: "rules",
+    continue: "rules",
+    copilot: "copilot",
+    cline: "rules",
+    roo: "rules",
+    openhands: "rules",
+    agents: "agents",
+  };
+
+/** Built-in targets plus optional extras from `.nuwa/config.json` */
+export function resolveFeedbackSkillTargets(
+  extra?: NuwaFeedbackSkillTarget[],
+): ResolvedFeedbackSkillTarget[] {
+  const builtIn: ResolvedFeedbackSkillTarget[] =
+    NUWA_FEEDBACK_SKILL_TARGETS.map((target) => ({
+      id: target.id,
+      label: target.label,
+      relativeFile: target.relativeFile,
+      format: BUILTIN_FORMAT_BY_ID[target.id],
+    }));
+
+  if (!extra?.length) {
+    return builtIn;
+  }
+
+  const seen = new Set(builtIn.map((t) => t.relativeFile));
+  const merged = [...builtIn];
+
+  for (const target of extra) {
+    if (seen.has(target.relativeFile)) {
+      continue;
+    }
+    merged.push({
+      id: target.id,
+      label: target.label,
+      relativeFile: target.relativeFile,
+      format: target.format ?? "rules",
+    });
+    seen.add(target.relativeFile);
+  }
+
+  return merged;
+}
 
 const SKILL_DESCRIPTION =
   "Address review findings from Nuwa persona reviews. Use when FEEDBACK.md exists, user mentions nuwa review feedback, or asks to fix review findings.";
@@ -98,20 +161,26 @@ ${buildNuwaFeedbackRulesMarkdown()}`;
 }
 
 /** Pick markdown variant for a deployment target */
-export function buildNuwaFeedbackContentForTarget(
-  targetId: NuwaFeedbackSkillTargetId,
+export function buildNuwaFeedbackContentForFormat(
+  format: NuwaFeedbackSkillFormat,
 ): string {
-  switch (targetId) {
-    case "cursor":
-    case "claude":
-    case "canonical":
+  switch (format) {
+    case "skill":
       return buildNuwaFeedbackSkillMarkdown();
     case "copilot":
       return buildNuwaFeedbackCopilotMarkdown();
     case "agents":
       return buildNuwaFeedbackAgentsMarkdown();
+    case "rules":
+      return buildNuwaFeedbackRulesMarkdown();
   }
-  return buildNuwaFeedbackRulesMarkdown();
+}
+
+/** @deprecated Use buildNuwaFeedbackContentForFormat */
+export function buildNuwaFeedbackContentForTarget(
+  targetId: NuwaFeedbackSkillTargetId,
+): string {
+  return buildNuwaFeedbackContentForFormat(BUILTIN_FORMAT_BY_ID[targetId]);
 }
 
 async function writeSkillFile(
@@ -125,13 +194,16 @@ async function writeSkillFile(
   return filePath;
 }
 
-/** Deploy nuwa-feedback to all supported AI tool paths */
+/** Deploy nuwa-feedback to built-in and config-extended AI tool paths */
 export async function writeNuwaFeedbackSkills(
   projectRoot: string,
 ): Promise<NuwaFeedbackSkillPaths> {
+  const config = await readNuwaConfig(projectRoot);
+  const targets = resolveFeedbackSkillTargets(config?.feedbackSkillTargets);
+
   const entries = await Promise.all(
-    NUWA_FEEDBACK_SKILL_TARGETS.map(async (target) => {
-      const content = buildNuwaFeedbackContentForTarget(target.id);
+    targets.map(async (target) => {
+      const content = buildNuwaFeedbackContentForFormat(target.format);
       const path = await writeSkillFile(
         projectRoot,
         target.relativeFile,
@@ -141,10 +213,7 @@ export async function writeNuwaFeedbackSkills(
     }),
   );
 
-  const paths = Object.fromEntries(entries) as Record<
-    NuwaFeedbackSkillTargetId,
-    string
-  >;
+  const paths = Object.fromEntries(entries) as Record<string, string>;
   const all = entries.map(([, path]) => path);
 
   return { ...paths, all };

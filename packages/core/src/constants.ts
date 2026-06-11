@@ -92,7 +92,7 @@ export type NuwaFeedbackSkillTargetId =
 
 /**
  * Small embedding model for persona index precomputation (~23 MB ONNX).
- * Cached under ~/.nuwa/models on first `pnpm precompute-index`.
+ * Cached under $XDG_CACHE_HOME/nuwa/models on first `pnpm precompute-index`.
  */
 /** Re-exported from @nuwajs/persona for convenience */
 export { EMBEDDING_MODEL as DEFAULT_EMBEDDING_MODEL } from "@nuwajs/persona";
