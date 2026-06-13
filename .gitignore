@@ -1,7 +1,6 @@
 node_modules
 dist
-.nuwa
-FEEDBACK.md
+
 .turbo
 *.tsbuildinfo
 .env
@@ -9,8 +8,11 @@ FEEDBACK.md
 .DS_Store
 coverage
 
+
+# NUWA specific
 .nuwa/
 !.nuwa/persona/
+FEEDBACK.md
 
 logs/
 .codegraph/
