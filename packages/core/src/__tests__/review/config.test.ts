@@ -44,6 +44,14 @@ describe("resolveReviewSettings", () => {
     expect(settings.maxTurns).toBe(30);
     expect(settings.model).toBe("claude-sonnet-4-6");
   });
+
+  it("migrates deprecated sonnet-4 model ids", () => {
+    const settings = resolveReviewSettings({
+      ...BASE_CONFIG,
+      review: { model: "claude-sonnet-4-20250514" },
+    });
+    expect(settings.model).toBe("claude-sonnet-4-6");
+  });
 });
 
 describe("mergeReviewConfig", () => {
@@ -53,5 +61,11 @@ describe("mergeReviewConfig", () => {
 
   it("preserves user overrides", () => {
     expect(mergeReviewConfig({ maxTurns: 25 }).maxTurns).toBe(25);
+  });
+
+  it("upgrades deprecated model on merge", () => {
+    expect(
+      mergeReviewConfig({ model: "claude-sonnet-4-20250514" }).model,
+    ).toBe("claude-sonnet-4-6");
   });
 });

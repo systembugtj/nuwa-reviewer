@@ -2,6 +2,7 @@ import {
   DEFAULT_REVIEW_MAX_DIFF_CHARS,
   DEFAULT_REVIEW_MAX_TURNS,
   DEFAULT_REVIEW_MODEL,
+  DEPRECATED_REVIEW_MODEL_ALIASES,
   NUWA_REVIEW_MAX_TURNS_ENV,
   NUWA_REVIEW_MODEL_ENV,
 } from "../constants.js";
@@ -48,6 +49,12 @@ function parseEnvInt(name: string): number | undefined {
   return Number.isNaN(parsed) || parsed <= 0 ? undefined : parsed;
 }
 
+/** Map retired model ids to a supported default */
+export function migrateReviewModel(model: string): string {
+  const trimmed = model.trim();
+  return DEPRECATED_REVIEW_MODEL_ALIASES[trimmed] ?? trimmed;
+}
+
 /**
  * Resolve review settings.
  * Precedence: overrides → env → `.nuwa/config.json` review → defaults.
@@ -64,11 +71,12 @@ export function resolveReviewSettings(
     positiveInt(fromFile.maxTurns) ??
     DEFAULT_REVIEW_MAX_TURNS;
 
-  const model =
+  const model = migrateReviewModel(
     overrides.model?.trim() ||
-    process.env[NUWA_REVIEW_MODEL_ENV]?.trim() ||
-    fromFile.model?.trim() ||
-    DEFAULT_REVIEW_MODEL;
+      process.env[NUWA_REVIEW_MODEL_ENV]?.trim() ||
+      fromFile.model?.trim() ||
+      DEFAULT_REVIEW_MODEL,
+  );
 
   const continueOnError =
     overrides.continueOnError ??
@@ -93,8 +101,12 @@ export function resolveReviewSettings(
 export function mergeReviewConfig(
   existing?: NuwaReviewConfig,
 ): NuwaReviewConfig {
-  return {
+  const merged = {
     ...DEFAULT_NUWA_REVIEW_CONFIG,
     ...existing,
   };
+  if (merged.model) {
+    merged.model = migrateReviewModel(merged.model);
+  }
+  return merged;
 }

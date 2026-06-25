@@ -101,7 +101,16 @@ export { EMBEDDING_MODEL as DEFAULT_EMBEDDING_MODEL } from "@nuwajs/persona";
 export const ANTHROPIC_API_KEY_ENV = "ANTHROPIC_API_KEY";
 
 /** Default Claude model for persona reviews */
-export const DEFAULT_REVIEW_MODEL = "claude-sonnet-4-20250514";
+export const DEFAULT_REVIEW_MODEL = "claude-sonnet-4-6";
+
+/** Retired / deprecated model ids → current default (see Anthropic model catalog) */
+export const DEPRECATED_REVIEW_MODEL_ALIASES: Readonly<Record<string, string>> = {
+  "claude-sonnet-4-20250514": DEFAULT_REVIEW_MODEL,
+  "claude-sonnet-4-0": DEFAULT_REVIEW_MODEL,
+  "claude-3-7-sonnet-20250219": DEFAULT_REVIEW_MODEL,
+  "claude-3-5-sonnet-20241022": DEFAULT_REVIEW_MODEL,
+  "claude-3-5-sonnet-20240620": DEFAULT_REVIEW_MODEL,
+};
 
 /** Default max agent turns per persona review (tool calls + responses) */
 export const DEFAULT_REVIEW_MAX_TURNS = 20;
