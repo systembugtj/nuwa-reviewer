@@ -6,7 +6,7 @@ import {
   NUWA_REVIEW_MAX_TURNS_ENV,
   NUWA_REVIEW_MODEL_ENV,
 } from "../constants.js";
-import type { NuwaConfig, NuwaReviewConfig } from "../types.js";
+import type { NuwaConfig, NuwaGlobalSettings, NuwaReviewConfig } from "../types.js";
 
 /** Default `.nuwa/config.json` → `review` block written on `nuwa init` */
 export const DEFAULT_NUWA_REVIEW_CONFIG: NuwaReviewConfig = {
@@ -57,36 +57,42 @@ export function migrateReviewModel(model: string): string {
 
 /**
  * Resolve review settings.
- * Precedence: overrides → env → `.nuwa/config.json` review → defaults.
+ * Precedence: overrides → env → project `.nuwa/config.json` → `~/.nuwa/settings.json` → defaults.
  */
 export function resolveReviewSettings(
   config: NuwaConfig | null,
   overrides: ReviewSettingsOverrides = {},
+  global: NuwaGlobalSettings | null = null,
 ): ResolvedReviewSettings {
   const fromFile = config?.review ?? {};
+  const fromGlobal = global?.review ?? {};
 
   const maxTurns =
     positiveInt(overrides.maxTurns) ??
     parseEnvInt(NUWA_REVIEW_MAX_TURNS_ENV) ??
     positiveInt(fromFile.maxTurns) ??
+    positiveInt(fromGlobal.maxTurns) ??
     DEFAULT_REVIEW_MAX_TURNS;
 
   const model = migrateReviewModel(
     overrides.model?.trim() ||
       process.env[NUWA_REVIEW_MODEL_ENV]?.trim() ||
       fromFile.model?.trim() ||
+      fromGlobal.model?.trim() ||
       DEFAULT_REVIEW_MODEL,
   );
 
   const continueOnError =
     overrides.continueOnError ??
     fromFile.continueOnError ??
+    fromGlobal.continueOnError ??
     DEFAULT_NUWA_REVIEW_CONFIG.continueOnError ??
     true;
 
   const maxDiffChars =
     positiveInt(overrides.maxDiffChars) ??
     positiveInt(fromFile.maxDiffChars) ??
+    positiveInt(fromGlobal.maxDiffChars) ??
     DEFAULT_REVIEW_MAX_DIFF_CHARS;
 
   return {

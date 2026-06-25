@@ -17,6 +17,9 @@ export const NUWA_MODELS_SUBDIR = "models";
 /** Global persona index filename under ~/.nuwa */
 export const NUWA_PERSONA_INDEX_FILENAME = "persona-index.json";
 
+/** User-wide Nuwa settings (model, review defaults) */
+export const NUWA_SETTINGS_FILENAME = "settings.json";
+
 /** Env: XDG Base Directory cache root (models stored under `<cache>/nuwa/models`) */
 export const XDG_CACHE_HOME_ENV = "XDG_CACHE_HOME";
 
@@ -35,6 +38,11 @@ export function getNuwaModelsDir(): string {
 /** Resolve ~/.nuwa/persona-index.json */
 export function getNuwaPersonaIndexPath(): string {
   return join(getNuwaHome(), NUWA_PERSONA_INDEX_FILENAME);
+}
+
+/** Resolve ~/.nuwa/settings.json */
+export function getNuwaSettingsPath(): string {
+  return join(getNuwaHome(), NUWA_SETTINGS_FILENAME);
 }
 
 async function pathExists(path: string): Promise<boolean> {

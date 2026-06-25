@@ -1,4 +1,5 @@
 export * from "./paths.js";
+export * from "./settings/global.js";
 export * from "./constants.js";
 export * from "./types.js";
 export * from "./project/detect.js";

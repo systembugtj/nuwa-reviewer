@@ -52,6 +52,23 @@ describe("resolveReviewSettings", () => {
     });
     expect(settings.model).toBe("claude-sonnet-4-6");
   });
+
+  it("reads review defaults from ~/.nuwa/settings.json", () => {
+    const settings = resolveReviewSettings(null, {}, {
+      review: { model: "claude-opus-4-8", maxTurns: 15 },
+    });
+    expect(settings.model).toBe("claude-opus-4-8");
+    expect(settings.maxTurns).toBe(15);
+  });
+
+  it("project review block beats global settings", () => {
+    const settings = resolveReviewSettings(
+      { ...BASE_CONFIG, review: { model: "claude-sonnet-4-6" } },
+      {},
+      { review: { model: "claude-opus-4-8" } },
+    );
+    expect(settings.model).toBe("claude-sonnet-4-6");
+  });
 });
 
 describe("mergeReviewConfig", () => {

@@ -55,6 +55,12 @@ export interface NuwaConfig {
   updatedAt: string;
 }
 
+/** User-wide settings in `~/.nuwa/settings.json` */
+export interface NuwaGlobalSettings {
+  version?: string;
+  review?: NuwaReviewConfig;
+}
+
 /** Single finding from a persona review */
 export interface ReviewFinding {
   personaId: string;

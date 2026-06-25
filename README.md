@@ -19,6 +19,7 @@ Created only when you run **`nuwa precompute-index`** (not during `init` or `rev
 | Path | Purpose |
 | --- | --- |
 | `~/.nuwa/persona-index.json` | Precomputed persona index (embeddings + metadata) |
+| `~/.nuwa/settings.json` | User-wide review defaults (model, maxTurns, …) |
 | `$XDG_CACHE_HOME/nuwa/models/` or `~/.cache/nuwa/models/` | Embedding model cache (`Xenova/all-MiniLM-L6-v2`, ~23 MB) |
 
 Project-local (per repo):
@@ -99,4 +100,19 @@ pnpm publish:packages
 | --- | --- |
 | `ANTHROPIC_API_KEY` | Claude Agent SDK for `nuwa review` |
 | `NUWA_INDEX_OFFLINE` | Set to `1` to skip embedding model download (heuristic index) |
+| `NUWA_REVIEW_MODEL` | Override review model for one run |
 | `XDG_CACHE_HOME` | Override embedding model cache directory |
+
+User-wide defaults live in `~/.nuwa/settings.json`:
+
+```json
+{
+  "version": "1",
+  "review": {
+    "model": "claude-sonnet-4-6",
+    "maxTurns": 20
+  }
+}
+```
+
+Precedence: CLI `--model` → `NUWA_REVIEW_MODEL` → project `.nuwa/config.json` → `~/.nuwa/settings.json` → built-in default.

@@ -5,6 +5,7 @@ import { NUWA_PERSONA_DIR } from "../constants.js";
 import type { DiffResult } from "../git/diff.js";
 import type { PersonaReviewOutput, ReviewFinding, ReviewRunResult } from "../types.js";
 import { readNuwaConfig } from "../persona/deploy.js";
+import { readNuwaGlobalSettings } from "../settings/global.js";
 import {
   resolveReviewSettings,
   type ResolvedReviewSettings,
@@ -234,7 +235,12 @@ export async function runReview(options: ReviewOptions): Promise<ReviewRunResult
     model: options.model,
     maxTurns: options.maxTurns,
   };
-  const settings = resolveReviewSettings(config, settingsOverrides);
+  const globalSettings = await readNuwaGlobalSettings();
+  const settings = resolveReviewSettings(
+    config,
+    settingsOverrides,
+    globalSettings,
+  );
 
   const previousReview = await loadPreviousReview(options.projectRoot);
   const personaIds = options.personas ?? config.personas;

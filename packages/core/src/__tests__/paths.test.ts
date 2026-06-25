@@ -5,6 +5,7 @@ import {
   getNuwaHome,
   getNuwaModelsDir,
   getNuwaPersonaIndexPath,
+  getNuwaSettingsPath,
   XDG_CACHE_HOME_ENV,
 } from "../paths.js";
 
@@ -41,6 +42,12 @@ describe("nuwa paths", () => {
   it("resolves persona index path", () => {
     expect(getNuwaPersonaIndexPath()).toBe(
       join(homedir(), ".nuwa", "persona-index.json"),
+    );
+  });
+
+  it("resolves global settings path", () => {
+    expect(getNuwaSettingsPath()).toBe(
+      join(homedir(), ".nuwa", "settings.json"),
     );
   });
 });
