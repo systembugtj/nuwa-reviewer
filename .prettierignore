@@ -1,0 +1,10 @@
+node_modules
+dist
+.turbo
+coverage
+pnpm-lock.yaml
+packages/persona/persona/index.precomputed.json
+**/*.map
+.nuwa
+FEEDBACK.md
+.codegraph

@@ -1,0 +1,1 @@
+NUWA_INDEX_OFFLINE=1 pnpm validate:ci
