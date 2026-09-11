@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@nuwajs/config-vite": "workspace:*",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.11"
   },
   "engines": {
     "node": ">=20"
